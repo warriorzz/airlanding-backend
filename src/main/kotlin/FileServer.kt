@@ -11,7 +11,7 @@ import io.ktor.util.logging.*
 import kotlinx.serialization.Serializable
 import java.io.File
 
-fun server(logger: Logger) = embeddedServer(CIO) {
+fun server(logger: Logger) = embeddedServer(CIO, port = serverPort) {
     configureAuthentication()
     routing {
         authenticate("auth") {
