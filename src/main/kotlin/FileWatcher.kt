@@ -15,18 +15,20 @@ suspend fun startFileWatcher(logger: Logger) {
 
     val watchChannel = directory.asWatchChannel(mode = KWatchChannel.Mode.SingleDirectory, scope = coroutineScope)
 
-    watchChannel.consumeEach { event ->
-        if (event.kind != KWatchEvent.Kind.Created) {
-            return@consumeEach
-        }
-        logger.debug("Received created event.")
-        val uuid = UUID.randomUUID().toString()
+    coroutineScope.launch {
+        watchChannel.consumeEach { event ->
+            if (event.kind != KWatchEvent.Kind.Created) {
+                return@consumeEach
+            }
+            logger.debug("Received created event.")
+            val uuid = UUID.randomUUID().toString()
 
-        val name = uuid + "/" + event.file.name
-        File(serveDirectory + name).mkdir()
-        event.file.copyTo(File(serveDirectory + name), true)
-        files.add(FileObject(name, event.file.name))
-        event.file.delete()
+            val name = uuid + "/" + event.file.name
+            File(serveDirectory + name).mkdir()
+            event.file.copyTo(File(serveDirectory + name), true)
+            files.add(FileObject(name, event.file.name))
+            event.file.delete()
+        }
     }
 
     Runtime.getRuntime().addShutdownHook(object : Thread() {
