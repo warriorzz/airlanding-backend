@@ -20,6 +20,7 @@ suspend fun main() {
     startFileWatcher(logger)
     logger.info("Started FileWatcher.")
     server(logger).start(true)
+    logger.info("Server exited.")
 }
 
 fun File.deleteFiles() {

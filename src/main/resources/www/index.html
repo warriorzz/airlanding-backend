@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>AirLanding Default Page</title>
+    <meta charset="utf-8">
+</head>
+<body>
+<h1>AirLanding default page.</h1>
+<div id="list"></div>
+
+<script lang="js">
+    let div = document.querySelector('#list')
+
+    fetch("/api/v1/files", {
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        method: "GET",
+    }).then((response) => response.json()).then((data) => {
+        data["files"].forEach((file) => {
+            let path = "/api/v1/file/" + file["id"]
+            let name = file["name"]
+            let paragraph = document.createElement("p"),
+            a = document.createElement("a");
+            a.href = path
+            a.innerText = name
+            paragraph.appendChild(a)
+            div.appendChild(paragraph);
+        })
+    })
+</script>
+</body>
+</html>

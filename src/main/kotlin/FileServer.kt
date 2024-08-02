@@ -16,14 +16,18 @@ fun server(logger: Logger) = embeddedServer(CIO, port = serverPort) {
     configureAuthentication()
     routing {
         authenticate("auth") {
-            get("/files") {
-                logger.debug("Received GET for /files from ${call.request.local.remoteAddress}")
-                call.respond(FileResponse(files.toList()))
+            route("/api/v1") {
+                get("/files") {
+                    logger.debug("Received GET for /files from ${call.request.local.remoteAddress}")
+                    call.respond(FileResponse(files.toList()))
+                }
+
+                staticFiles("/file", File(serveDirectory)) {
+                    enableAutoHeadResponse()
+                }
             }
 
-            staticFiles("/file", File(serveDirectory)) {
-                enableAutoHeadResponse()
-            }
+            staticResources("/", "www", "index.html")
         }
     }
     logger.info("Configured server. Startup complete.")
@@ -45,5 +49,5 @@ fun Application.configureAuthentication() {
 
 val files = ConcurrentSet<FileObject>()
 
-@Serializable data class FileObject(val id: String,  val name: String)
+@Serializable data class FileObject(val id: String, val name: String)
 @Serializable data class FileResponse(val files: List<FileObject>)

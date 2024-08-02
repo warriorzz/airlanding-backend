@@ -17,15 +17,16 @@ suspend fun startFileWatcher(logger: Logger) {
 
     coroutineScope.launch {
         watchChannel.consumeEach { event ->
+            logger.debug("Received a file watcher event.")
             if (event.kind != KWatchEvent.Kind.Created) {
                 return@consumeEach
             }
-            logger.debug("Received created event.")
+            logger.info("Received created event.")
             val uuid = UUID.randomUUID().toString()
 
             val name = uuid + "/" + event.file.name
-            File(serveDirectory + name).mkdir()
             event.file.copyTo(File(serveDirectory + name), true)
+            logger.info("Transferred file to serve directory.")
             files.add(FileObject(name, event.file.name))
             event.file.delete()
         }
