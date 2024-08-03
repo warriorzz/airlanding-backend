@@ -1,10 +1,12 @@
 package ee.bjarn.airlanding
 
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.ktor.server.http.content.*
+import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.collections.*
@@ -14,6 +16,9 @@ import java.io.File
 
 fun server(logger: Logger) = embeddedServer(CIO, port = serverPort) {
     configureAuthentication()
+    install(ContentNegotiation) {
+        json()
+    }
     routing {
         authenticate("auth") {
             route("/api/v1") {
