@@ -13,11 +13,13 @@
 
     fetch("/api/v1/files", {
         headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Accept': 'application/json'
         },
         method: "GET",
-    }).then((response) => response.json()).then((data) => {
+    }).then((response) => {
+        console.log(response)
+        return response.json()
+    }).then((data) => {
         data["files"].forEach((file) => {
             let path = "/api/v1/file/" + file["id"]
             let name = file["name"]
